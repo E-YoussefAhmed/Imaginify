@@ -4,13 +4,17 @@ import { redirect } from "next/navigation";
 import Header from "@/components/shared/header";
 import TransformationForm from "@/components/shared/transformation-form";
 import { transformationTypes } from "@/constants";
-import { getUserById } from "@/lib/data/user";
 import { getImageById } from "@/lib/actions/image";
 
 const Page = async ({ params: { id } }: SearchParamProps) => {
   const session = await auth();
 
-  if (!session) redirect("/login");
+  if (!session?.user) {
+    const encodedCallbackUrl = encodeURIComponent(
+      `/transformations/${id}/update`
+    );
+    redirect(`/login?callbackUrl=${encodedCallbackUrl}`);
+  }
 
   const image = await getImageById(id);
 

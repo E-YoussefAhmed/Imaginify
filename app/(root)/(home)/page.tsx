@@ -1,19 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { auth } from "@/auth";
 import { navLinks } from "@/constants";
 import { Collection } from "@/components/shared/collection";
 import { getAllImages } from "@/lib/actions/image";
 
 const Home = async ({ searchParams }: SearchParamProps) => {
-  const session = await auth();
   const page = Number(searchParams?.page) || 1;
   const searchQuery = (searchParams?.query as string) || "";
 
   const images = await getAllImages({ page, searchQuery });
-
-  console.log(session);
 
   return (
     <>

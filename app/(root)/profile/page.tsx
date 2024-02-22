@@ -13,7 +13,10 @@ const Profile = async ({ searchParams }: SearchParamProps) => {
   const page = Number(searchParams?.page) || 1;
   const session = await auth();
 
-  if (!session) redirect("/login");
+  if (!session?.user) {
+    const encodedCallbackUrl = encodeURIComponent("/profile");
+    redirect(`/login?callbackUrl=${encodedCallbackUrl}`);
+  }
 
   const images = await getUserImages({ page });
   const user = await getUserById(session.user.id);

@@ -10,8 +10,10 @@ import Checkout from "@/components/shared/checkout";
 const Credits = async () => {
   const session = await auth();
 
-  if (!session) redirect("/login");
-
+  if (!session?.user) {
+    const encodedCallbackUrl = encodeURIComponent("/credits");
+    redirect(`/login?callbackUrl=${encodedCallbackUrl}`);
+  }
   return (
     <>
       <Header
