@@ -56,11 +56,7 @@ export const createUser = async (
   }
 };
 
-export const updateCredits = async (
-  userId: string,
-  creditFee: number,
-  planId?: number
-) => {
+export const updateCredits = async (userId: string, creditFee: number) => {
   try {
     await connectToDatabase();
     const session = await auth();
@@ -69,7 +65,6 @@ export const updateCredits = async (
       { user_id: userId },
       {
         $inc: { creditBalance: creditFee },
-        planId: planId ? planId : session?.user.planId,
       }
     );
 
@@ -79,6 +74,43 @@ export const updateCredits = async (
         user: {
           ...session?.user,
           creditBalance: Number(session?.user.creditBalance) + creditFee,
+        },
+      });
+    }
+
+    if (!updatedUser) throw new Error("User credits update failed");
+
+    return {
+      creditBalance: JSON.parse(JSON.stringify(updatedUser)).creditBalance,
+    };
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const incCredits = async (
+  userId: string,
+  credits: number,
+  planId: number
+) => {
+  try {
+    await connectToDatabase();
+    const session = await auth();
+
+    const updatedUser = await User.findOneAndUpdate(
+      { user_id: userId },
+      {
+        $inc: { creditBalance: credits },
+        planId: planId ? planId : session?.user.planId,
+      }
+    );
+
+    if (session) {
+      await unstable_update({
+        ...session,
+        user: {
+          ...session?.user,
+          creditBalance: Number(session?.user.creditBalance) + credits,
           planId,
         },
       });

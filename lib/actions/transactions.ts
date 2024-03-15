@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import Transaction from "@/lib/models/transaction.model";
 import { handleError } from "@/lib/utils";
 import { connectToDatabase } from "@/lib/db/mongoose";
-import { updateCredits } from "@/lib/data/user";
+import { incCredits } from "@/lib/data/user";
 
 export const checkoutCredits = async (
   transaction: CheckoutTransactionParams
@@ -54,9 +54,9 @@ export const createTransaction = async (
       buyer: transaction.buyerId,
     });
 
-    await updateCredits(
+    await incCredits(
       newTransaction.buyerId,
-      transaction.credits,
+      Number(transaction.credits),
       transaction.planId
     );
 
