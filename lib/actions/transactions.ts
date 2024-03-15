@@ -55,7 +55,7 @@ export const createTransaction = async (
     });
 
     await incCredits(
-      newTransaction.buyerId,
+      transaction.buyerId,
       Number(transaction.credits),
       transaction.planId
     );
