@@ -21,16 +21,17 @@ export const Social = ({ callbackUrl }: { callbackUrl?: string }) => {
         className="w-full"
         onClick={() => onClick("google")}
       >
-        <FcGoogle className="h-5 w-5" />
+        <FcGoogle className="h-5 w-5 mx-2" />
+        Continue with Google
       </Button>
-      <Button
+      {/* <Button
         size="lg"
         variant="outline"
         className="w-full"
         onClick={() => onClick("github")}
       >
         <FaGithub className="h-5 w-5" />
-      </Button>
+      </Button> */}
     </div>
   );
 };
