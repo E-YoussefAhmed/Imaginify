@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import User from "@/lib/models/user.model";
 import { handleError } from "@/lib/utils";
+import { auth, unstable_update } from "@/auth";
 
 export const getUserByEmail = async (email: string) => {
   try {
@@ -55,14 +56,33 @@ export const createUser = async (
   }
 };
 
-export const updateCredits = async (userId: string, creditFee: number) => {
+export const updateCredits = async (
+  userId: string,
+  creditFee: number,
+  planId?: number
+) => {
   try {
     await connectToDatabase();
+    const session = await auth();
 
     const updatedUser = await User.findOneAndUpdate(
       { user_id: userId },
-      { $inc: { creditBalance: creditFee } }
+      {
+        $inc: { creditBalance: creditFee },
+        planId: planId ? planId : session?.user.planId,
+      }
     );
+
+    if (session) {
+      await unstable_update({
+        ...session,
+        user: {
+          ...session?.user,
+          creditBalance: Number(session?.user.creditBalance) + creditFee,
+          planId,
+        },
+      });
+    }
 
     if (!updatedUser) throw new Error("User credits update failed");
 

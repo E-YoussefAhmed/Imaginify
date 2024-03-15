@@ -4,12 +4,16 @@ import Link from "next/link";
 import { navLinks } from "@/constants";
 import { Collection } from "@/components/shared/collection";
 import { getAllImages } from "@/lib/actions/image";
+import { auth } from "@/auth";
 
 const Home = async ({ searchParams }: SearchParamProps) => {
   const page = Number(searchParams?.page) || 1;
   const searchQuery = (searchParams?.query as string) || "";
 
   const images = await getAllImages({ page, searchQuery });
+
+  const session = await auth();
+  console.log({ session });
 
   return (
     <>

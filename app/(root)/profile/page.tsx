@@ -2,7 +2,6 @@ export const dynamic = "force-dynamic";
 
 import { auth } from "@/auth";
 import Image from "next/image";
-import { redirect } from "next/navigation";
 
 import { Collection } from "@/components/shared/collection";
 import Header from "@/components/shared/header";
@@ -13,13 +12,8 @@ const Profile = async ({ searchParams }: SearchParamProps) => {
   const page = Number(searchParams?.page) || 1;
   const session = await auth();
 
-  if (!session?.user) {
-    const encodedCallbackUrl = encodeURIComponent("/profile");
-    redirect(`/login?callbackUrl=${encodedCallbackUrl}`);
-  }
-
   const images = await getUserImages({ page });
-  const user = await getUserById(session.user.id);
+  const user = await getUserById(session?.user?.id!);
 
   return (
     <>

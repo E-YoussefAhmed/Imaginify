@@ -73,6 +73,7 @@ declare type Transformations = {
 
 // ====== TRANSACTION PARAMS
 declare type CheckoutTransactionParams = {
+  planId: number;
   plan: string;
   credits: number;
   amount: number;
@@ -83,6 +84,7 @@ declare type CreateTransactionParams = {
   stripeId: string;
   amount: number;
   credits: number;
+  planId: number;
   plan: string;
   buyerId: string;
   createdAt: Date;

@@ -112,15 +112,16 @@ const TransformationForm = ({
     setNewTransformation(null);
 
     startTransition(async () => {
-      await updateCredits(userId, creditFee).then(async () => {
-        await update({
-          ...session,
-          user: {
-            ...session?.user,
-            creditBalance: Number(session?.user.creditBalance) + creditFee,
-          },
-        });
-      });
+      await updateCredits(userId, creditFee);
+      // .then(async () => {
+      //   await update({
+      //     ...session,
+      //     user: {
+      //       ...session?.user,
+      //       creditBalance: Number(session?.user.creditBalance) + creditFee,
+      //     },
+      //   });
+      // });
     });
   };
 

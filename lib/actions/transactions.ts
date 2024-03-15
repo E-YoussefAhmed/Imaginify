@@ -30,6 +30,7 @@ export const checkoutCredits = async (
       },
     ],
     metadata: {
+      planId: transaction.planId,
       plan: transaction.plan,
       credits: transaction.credits,
       buyerId: transaction.buyerId,
@@ -53,7 +54,11 @@ export const createTransaction = async (
       buyer: transaction.buyerId,
     });
 
-    await updateCredits(newTransaction.buyerId, transaction.credits);
+    await updateCredits(
+      newTransaction.buyerId,
+      transaction.credits,
+      transaction.planId
+    );
 
     return JSON.parse(JSON.stringify(newTransaction));
   } catch (error) {

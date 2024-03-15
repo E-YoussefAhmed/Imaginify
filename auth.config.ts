@@ -1,75 +1,57 @@
 import type { NextAuthConfig } from "next-auth";
-import crypto from "crypto";
-import { compare } from "bcryptjs";
-import Credentials from "next-auth/providers/credentials";
-import Github from "next-auth/providers/github";
-import Google from "next-auth/providers/google";
-import { getUserByEmail, getUserById } from "@/lib/data/user";
-import { LoginSchema } from "@/lib/schemas/yup";
+import {
+  DEFAULT_LOGIN_REDIRECT,
+  apiAuthPrefix,
+  authRoutes,
+  publicRoutes,
+} from "@/routes";
 
-export default {
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      async profile(profile) {
-        let userId;
-        while (true) {
-          userId = crypto.randomInt(1_000_000, 10_000_000).toString();
-          const user = await getUserById(userId);
-          if (!user) break;
+export const authConfig = {
+  pages: {
+    signIn: "/login",
+  },
+  callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+      const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+      const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+      const isStripeApi = nextUrl.pathname === "/api/webhooks/stripe";
+
+      if (isApiAuthRoute) {
+        return true;
+      }
+
+      if (isAuthRoute || isStripeApi) {
+        if (isLoggedIn) {
+          return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
         }
-        return {
-          id: profile.sub,
-          user_id: userId,
-          email: profile.email,
-          image: profile.picture,
-          firstName: profile.given_name,
-          lastName: profile.family_name,
-          planId: 1,
-          creditBalance: 10,
-        };
-      },
-    }),
-    Github({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      async profile(profile) {
-        let userId;
-        while (true) {
-          userId = crypto.randomInt(1_000_000, 10_000_000).toString();
-          const user = await getUserById(userId);
-          if (!user) break;
-        }
-        return {
-          id: profile.id.toString(),
-          user_id: userId,
-          email: profile.email,
-          image: profile.avatar_url,
-          firstName: profile.login,
-          planId: 1,
-          creditBalance: 10,
-        };
-      },
-    }),
-    Credentials({
-      async authorize(credentials) {
-        try {
-          const validateFields = await LoginSchema.validate(credentials);
-          const { email, password } = validateFields;
+        return true;
+      }
 
-          const user = await getUserByEmail(email);
-          if (!user || !user.password) return null;
+      if (!isLoggedIn && !isPublicRoute) {
+        let callbackUrl = nextUrl.pathname;
 
-          const passwordMatch = await compare(password, user.password);
-
-          if (passwordMatch) return user;
-        } catch {
-          return null;
+        if (nextUrl.search) {
+          callbackUrl += nextUrl.search;
         }
 
-        return null;
-      },
-    }),
-  ],
+        const encodedCallbackUrl = encodeURIComponent(callbackUrl);
+
+        return Response.redirect(
+          new URL(`/login?callbackUrl=${encodedCallbackUrl}`, nextUrl)
+        );
+      }
+
+      // const isOnDashboard = nextUrl.pathname.startsWith("/dashboard");
+      // if (isOnDashboard) {
+      //   if (isLoggedIn) return true;
+      //   return false; // Redirect unauthenticated users to login page
+      // } else if (isLoggedIn) {
+      //   return Response.redirect(new URL("/dashboard", nextUrl));
+      // }
+      return true;
+    },
+  },
+  providers: [],
 } satisfies NextAuthConfig;

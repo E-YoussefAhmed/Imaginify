@@ -9,16 +9,9 @@ import { getImageById } from "@/lib/actions/image";
 const Page = async ({ params: { id } }: SearchParamProps) => {
   const session = await auth();
 
-  if (!session?.user) {
-    const encodedCallbackUrl = encodeURIComponent(
-      `/transformations/${id}/update`
-    );
-    redirect(`/login?callbackUrl=${encodedCallbackUrl}`);
-  }
-
   const image = await getImageById(id);
 
-  if (session.user.id !== image.author.user_id)
+  if (session?.user.id !== image.author.user_id)
     redirect(`/transformations/${id}`);
 
   const transformation =
@@ -31,9 +24,9 @@ const Page = async ({ params: { id } }: SearchParamProps) => {
       <section className="mt-10">
         <TransformationForm
           action="Update"
-          userId={session.user.id}
+          userId={session?.user.id!}
           type={image.transformationType as TransformationTypeKey}
-          creditBalance={session.user.creditBalance}
+          creditBalance={session?.user.creditBalance!}
           config={image.config}
           data={image}
         />

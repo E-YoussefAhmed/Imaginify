@@ -1,7 +1,6 @@
 import { auth } from "@/auth";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 import Header from "@/components/shared/header";
 import TransformedImage from "@/components/shared/transformed-image";
@@ -12,11 +11,6 @@ import { DeleteConfirmation } from "@/components/shared/delete-confirmation";
 
 const ImageDetails = async ({ params: { id } }: SearchParamProps) => {
   const session = await auth();
-
-  if (!session?.user) {
-    const encodedCallbackUrl = encodeURIComponent(`/transformations/${id}`);
-    redirect(`/login?callbackUrl=${encodedCallbackUrl}`);
-  }
 
   const image = await getImageById(id);
 

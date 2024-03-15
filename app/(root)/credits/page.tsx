@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import Image from "next/image";
-import { redirect } from "next/navigation";
 
 import Header from "@/components/shared/header";
 import { Button } from "@/components/ui/button";
@@ -10,10 +9,6 @@ import Checkout from "@/components/shared/checkout";
 const Credits = async () => {
   const session = await auth();
 
-  if (!session?.user) {
-    const encodedCallbackUrl = encodeURIComponent("/credits");
-    redirect(`/login?callbackUrl=${encodedCallbackUrl}`);
-  }
   return (
     <>
       <Header
@@ -60,8 +55,9 @@ const Credits = async () => {
                 </Button>
               ) : (
                 <>
-                  {session.user && (
+                  {session?.user && (
                     <Checkout
+                      planId={plan._id}
                       plan={plan.name}
                       amount={plan.price}
                       credits={plan.credits}
