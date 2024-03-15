@@ -6,12 +6,14 @@ import Image from "next/image";
 import { Collection } from "@/components/shared/collection";
 import Header from "@/components/shared/header";
 import { getUserImages } from "@/lib/actions/image";
+import { getUserById } from "@/lib/data/user";
 
 const Profile = async ({ searchParams }: SearchParamProps) => {
   const page = Number(searchParams?.page) || 1;
   const session = await auth();
 
   const images = await getUserImages({ page });
+  const user = await getUserById(session?.user?.id!);
 
   return (
     <>
@@ -28,9 +30,7 @@ const Profile = async ({ searchParams }: SearchParamProps) => {
               height={50}
               className="size-9 md:size-12"
             />
-            <h2 className="h2-bold text-dark-600">
-              {session?.user.creditBalance}
-            </h2>
+            <h2 className="h2-bold text-dark-600">{user.creditBalance}</h2>
           </div>
         </div>
 

@@ -57,7 +57,7 @@ const UserButton = async ({ withName }: { withName?: boolean }) => {
             </Button>
           </form>
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuSeparator />
         <DropdownMenuItem>
           <Link href="/settings" className="w-full">
             <Button variant="ghost" className="w-full" type="submit">
@@ -65,7 +65,7 @@ const UserButton = async ({ withName }: { withName?: boolean }) => {
               Settings
             </Button>
           </Link>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );
