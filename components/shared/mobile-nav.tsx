@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { auth } from "@/auth";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
 import { Button } from "@/components/ui/button";
 import UserButton from "@/components/auth/user-button";
 import MobileSideNav from "@/components/shared/mobile-side-nav";
@@ -24,28 +24,7 @@ const MobileNav = async () => {
         {session ? (
           <>
             <UserButton />
-            <Sheet>
-              <SheetTrigger>
-                <Image
-                  src="/assets/icons/menu.svg"
-                  alt="menu"
-                  width={32}
-                  height={32}
-                  className="cursor-pointer"
-                />
-              </SheetTrigger>
-              <SheetContent className="sheet-content sm:w-64">
-                <>
-                  <Image
-                    src="/assets/images/logo-text.svg"
-                    alt="logo"
-                    width={152}
-                    height={23}
-                  />
-                  <MobileSideNav />
-                </>
-              </SheetContent>
-            </Sheet>
+            <MobileSideNav />
           </>
         ) : (
           <Button asChild className="button bg-purple-gradient bg-cover">

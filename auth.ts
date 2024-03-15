@@ -42,27 +42,27 @@ export const {
         };
       },
     }),
-    Github({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      async profile(profile) {
-        let userId;
-        while (true) {
-          userId = crypto.randomInt(1_000_000, 10_000_000).toString();
-          const user = await getUserById(userId);
-          if (!user) break;
-        }
-        return {
-          id: profile.id.toString(),
-          user_id: userId,
-          email: profile.email,
-          image: profile.avatar_url,
-          firstName: profile.login,
-          planId: 1,
-          creditBalance: 10,
-        };
-      },
-    }),
+    // Github({
+    //   clientId: process.env.GITHUB_CLIENT_ID,
+    //   clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    //   async profile(profile) {
+    //     let userId;
+    //     while (true) {
+    //       userId = crypto.randomInt(1_000_000, 10_000_000).toString();
+    //       const user = await getUserById(userId);
+    //       if (!user) break;
+    //     }
+    //     return {
+    //       id: profile.id.toString(),
+    //       user_id: userId,
+    //       email: profile.email,
+    //       image: profile.avatar_url,
+    //       firstName: profile.login,
+    //       planId: 1,
+    //       creditBalance: 10,
+    //     };
+    //   },
+    // }),
     Credentials({
       async authorize(credentials) {
         try {
@@ -90,7 +90,6 @@ export const {
     async jwt({ token, user, trigger, session }) {
       if (user) {
         if (!user._doc) {
-          console.log({ token, user });
           token.userId = user.user_id;
           token.email = user.email;
           token.picture = user.image;
